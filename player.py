@@ -34,3 +34,20 @@ class MusicPlayer:
 
     def get_pos(self):
         return mixer.music.get_pos() / 1000.0
+
+
+
+
+if __name__ == "__main__":
+    print("Testing MusicPlayer (˶˃ ᵕ ˂˶) ...")
+    player = MusicPlayer()
+    print(f"Player done. Volumen: {player.volume}")
+
+    # Pon el nombre de tu canción aquí:
+    player.load("./music/Cráneo x $kyhook - Ciencia.mp3")
+    print("Song Loaded ❤︎")
+
+    player.play()
+    print("Playing ദ്ദി ˉ͈̀꒳ˉ͈́ )✧ ...")
+    input("Press ENTER to stop... ◝(ᵔᗜᵔ)◜ ")
+    player.stop()
