@@ -3,7 +3,7 @@ from pygame import mixer
 
 class MusicPlayer:
     def __init__(self):
-        mixer.init()
+        mixer.init(frequency=44100, size=-16, channels=2, buffer=4096)
         self.current_song = None
         self.is_playing = False
         self.volume = 0.7
