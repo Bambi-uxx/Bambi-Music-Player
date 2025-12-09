@@ -36,10 +36,35 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+    
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                if player.is_playing:
+                    player.pause()
+                else:
+                    player.unpause()
+        
+            elif event.key == pygame.K_RIGHT:
+                next_song = playlist.next_song()
+                player.load(next_song['path'])
+                player.play()
+            
+                lrc_path = LYRICS_FOLDER + "/" + Path(next_song['path']).stem + ".lrc"
+                lyrics_manager.load_lrc(lrc_path)
+        
+            elif event.key == pygame.K_LEFT:
+                prev_song = playlist.previous_song()
+                player.load(prev_song['path'])
+                player.play()
+            
+                lrc_path = LYRICS_FOLDER + "/" + Path(prev_song['path']).stem + ".lrc"
+                lyrics_manager.load_lrc(lrc_path)
+        
+            elif event.key == pygame.K_s:
+                player.stop()
 
     if (player.is_playing):
         current_pos = player.get_pos()
-        print(f"Pos: {current_pos:.2f}s")
         current_line_index = lyrics_manager.get_current_line(current_pos)
 
     screen.fill(BG_COLOR)
