@@ -105,7 +105,25 @@ while running:
             elif vol_down_rect.collidepoint(mouse_pos):
                 current_vol = player.volume
                 player.set_volume(current_vol - 0.1)
+            
+            elif vol_down_rect.collidepoint(mouse_pos):
+                current_vol = player.volume
+                player.set_volume(current_vol - 0.1)
 
+            elif show_playlist and mouse_pos[0] < SCREEN_AREA_WIDTH:
+                click_y = mouse_pos[1]
+
+                if click_y > 70:
+                    song_index = (click_y - 70) //40
+
+                    if 0 <= song_index < len(playlist.songs):
+                        playlist.current_index = song_index
+                        selected_song = playlist.songs[song_index]
+
+                        player.load(selected_song['path'])
+                        player.play()
+                        lrc_path = LYRICS_FOLDER + "/" + Path(selected_song['path']).stem + ".lrc"
+                        lyrics_manager.load_lrc(lrc_path)
 
     if (player.is_playing):
         current_pos = player.get_pos()
