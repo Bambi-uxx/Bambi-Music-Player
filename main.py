@@ -31,6 +31,8 @@ font_small = pygame.font.Font(None, 32)
 
 current_line_index = -1
 current_pos = 0
+show_playlist = False
+
 
 #Buttons
 play_button_rect = pygame.Rect(CIRCLE_CENTER_X - 40, CIRCLE_CENTER_Y - 40, 80, 80)
@@ -69,6 +71,9 @@ while running:
         
             elif event.key == pygame.K_s:
                 player.stop()
+
+            elif event.key == pygame.K_TAB:
+                show_playlist = not show_playlist
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = event.pos
@@ -126,15 +131,41 @@ while running:
     vol_down_text = font_small.render("-", True, TEXT_COLOR)
     screen.blit(vol_down_text, (CIRCLE_CENTER_X - 10, CIRCLE_CENTER_Y + 90))
 
-    if len(lyrics_manager.lyrics) > 0 and current_line_index >= 0:
-        timestamp, text = lyrics_manager.lyrics[current_line_index]
-        text_surface = font_lyrics.render(text, True, HIGHLIGHT_COLOR)
-
+    # Alternate between playlist and lyrics
+    if show_playlist:
     
-        pos_x = SCREEN_AREA_WIDTH // 2 - text_surface.get_width() // 2
-        pos_y = WINDOW_HEIGHT // 2
+        title_text = font_small.render("PLAYLIST", True, TEXT_COLOR)
+        screen.blit(title_text, (20, 20))
+    
+    
+        y_offset = 70
+        for i, song in enumerate(playlist.songs):
+        
+            if i == playlist.current_index:
+                color = HIGHLIGHT_COLOR
+                prefix = "► "
+            else:
+                color = TEXT_COLOR
+                prefix = "  "
+        
+            song_text = font_small.render(f"{prefix}{song['title']}", True, color)
+            screen.blit(song_text, (40, y_offset))
+        
+            y_offset += 40
+        
+        
+            if y_offset > WINDOW_HEIGHT - 50:
+                break
+    else:
+    
+        if len(lyrics_manager.lyrics) > 0 and current_line_index >= 0:
+            timestamp, text = lyrics_manager.lyrics[current_line_index]
+            text_surface = font_lyrics.render(text, True, HIGHLIGHT_COLOR)
 
-        screen.blit(text_surface, (pos_x, pos_y))
+            pos_x = SCREEN_AREA_WIDTH // 2 - text_surface.get_width() // 2
+            pos_y = WINDOW_HEIGHT // 2
+
+            screen.blit(text_surface, (pos_x, pos_y))
 
     pygame.display.flip()
     clock.tick(60)
