@@ -1,8 +1,8 @@
 import pygame
 
 #Window dimentions
-WINDOW_WIDTH = 1200
-WINDOW_HEIGHT = 800
+WINDOW_WIDTH = 1400
+WINDOW_HEIGHT = 700
 
 #Colors
 BG_COLOR = (15, 6, 6)
@@ -14,3 +14,16 @@ HIGHLIGHT_COLOR = (101, 0, 0)
 #Routes
 MUSIC_FOLDER = './music'
 LYRICS_FOLDER = './lyrics'
+
+#Layout divisions
+SCREEN_AREA_WIDTH = 900
+CONTROLS_AREA_WIDTH = 500
+CONTROLS_AREA_X = 900
+
+#Control circle
+CIRCLE_CENTER_X = CONTROLS_AREA_X + 250
+CIRCLE_CENTER_Y = WINDOW_HEIGHT // 2
+CIRCLE_RADIUS = 150
+
+#Button positions
+BUTTON_SIZE = 50
