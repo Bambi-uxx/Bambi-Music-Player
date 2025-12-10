@@ -105,16 +105,12 @@ while running:
             elif vol_down_rect.collidepoint(mouse_pos):
                 current_vol = player.volume
                 player.set_volume(current_vol - 0.1)
-            
-            elif vol_down_rect.collidepoint(mouse_pos):
-                current_vol = player.volume
-                player.set_volume(current_vol - 0.1)
 
             elif show_playlist and mouse_pos[0] < SCREEN_AREA_WIDTH:
                 click_y = mouse_pos[1]
 
-                if click_y > 70:
-                    song_index = (click_y - 70) //40
+                if click_y > PLAYLIST_START_Y:
+                    song_index = (click_y - PLAYLIST_START_Y) // PLAYLIST_ITEM_HEIGHT
 
                     if 0 <= song_index < len(playlist.songs):
                         playlist.current_index = song_index
@@ -149,14 +145,25 @@ while running:
     vol_down_text = font_small.render("-", True, TEXT_COLOR)
     screen.blit(vol_down_text, (CIRCLE_CENTER_X - 10, CIRCLE_CENTER_Y + 90))
 
+    #Title and artist
+    if len(playlist.songs) > 0:
+        current_song = playlist.get_current_song()
+        if current_song:
+            # Title
+            title_display = font_small.render(current_song['title'], True, TEXT_COLOR)
+            screen.blit(title_display, (SONG_INFO_X, SONG_TITLE_Y))
+            
+            # Artist
+            artist_display = font_small.render(f"by {current_song['artist']}", True, (150, 150, 150))
+            screen.blit(artist_display, (SONG_INFO_X, SONG_ARTIST_Y))
+
     # Alternate between playlist and lyrics
     if show_playlist:
     
         title_text = font_small.render("PLAYLIST", True, TEXT_COLOR)
-        screen.blit(title_text, (20, 20))
+        screen.blit(title_text, (SONG_INFO_X, PLAYLIST_TITLE_Y))
     
-    
-        y_offset = 70
+        y_offset = PLAYLIST_START_Y
         for i, song in enumerate(playlist.songs):
         
             if i == playlist.current_index:
@@ -167,9 +174,9 @@ while running:
                 prefix = "  "
         
             song_text = font_small.render(f"{prefix}{song['title']}", True, color)
-            screen.blit(song_text, (40, y_offset))
+            screen.blit(song_text, (PLAYLIST_ITEM_X, y_offset))
         
-            y_offset += 40
+            y_offset += PLAYLIST_ITEM_HEIGHT
         
         
             if y_offset > WINDOW_HEIGHT - 50:
