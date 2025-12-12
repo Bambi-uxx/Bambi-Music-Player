@@ -26,8 +26,12 @@ if len(playlist.songs) > 0:
     lrc_path = LYRICS_FOLDER + "/" + Path(first_song['path']).stem + ".lrc"
     lyrics_manager.load_lrc(lrc_path)
 
-font_lyrics = pygame.font.Font(None, 48)
-font_small = pygame.font.Font(None, 32)
+#Fonts
+font_lyrics_current = pygame.font.Font(None, FONT_SIZE_LYRICS_CURRENT)
+font_lyrics_context = pygame.font.Font(None, FONT_SIZE_LYRICS_CONTEXT)
+font_title = pygame.font.Font(None, FONT_SIZE_TITLE)
+font_artist = pygame.font.Font(None, FONT_SIZE_ARTIST)
+font_playlist = pygame.font.Font(None, FONT_SIZE_PLAYLIST_ITEM)
 
 current_line_index = -1
 current_pos = 0
@@ -139,10 +143,10 @@ while running:
     next_x = CIRCLE_CENTER_X + 100
     pygame.draw.polygon(screen, TEXT_COLOR, [(next_x+15, CIRCLE_CENTER_Y), (next_x-15, CIRCLE_CENTER_Y-15), (next_x-15, CIRCLE_CENTER_Y+15)])
     
-    vol_up_text = font_small.render("+", True, TEXT_COLOR)
+    vol_up_text = font_playlist.render("+", True, TEXT_COLOR)
     screen.blit(vol_up_text, (CIRCLE_CENTER_X - 10, CIRCLE_CENTER_Y - 110))
     
-    vol_down_text = font_small.render("-", True, TEXT_COLOR)
+    vol_down_text = font_playlist.render("-", True, TEXT_COLOR)
     screen.blit(vol_down_text, (CIRCLE_CENTER_X - 10, CIRCLE_CENTER_Y + 90))
 
     #Title and artist
@@ -150,17 +154,17 @@ while running:
         current_song = playlist.get_current_song()
         if current_song:
             # Title
-            title_display = font_small.render(current_song['title'], True, TEXT_COLOR)
+            title_display = font_title.render(current_song['title'], True, TEXT_COLOR)
             screen.blit(title_display, (SONG_INFO_X, SONG_TITLE_Y))
             
             # Artist
-            artist_display = font_small.render(f"by {current_song['artist']}", True, (150, 150, 150))
+            artist_display = font_artist.render(f"by {current_song['artist']}", True, (150, 150, 150))
             screen.blit(artist_display, (SONG_INFO_X, SONG_ARTIST_Y))
 
     # Alternate between playlist and lyrics
     if show_playlist:
     
-        title_text = font_small.render("PLAYLIST", True, TEXT_COLOR)
+        title_text = font_playlist.render("PLAYLIST", True, TEXT_COLOR)
         screen.blit(title_text, (SONG_INFO_X, PLAYLIST_TITLE_Y))
     
         y_offset = PLAYLIST_START_Y
@@ -173,7 +177,7 @@ while running:
                 color = TEXT_COLOR
                 prefix = "  "
         
-            song_text = font_small.render(f"{prefix}{song['title']}", True, color)
+            song_text = font_playlist.render(f"{prefix}{song['title']}", True, color)
             screen.blit(song_text, (PLAYLIST_ITEM_X, y_offset))
         
             y_offset += PLAYLIST_ITEM_HEIGHT
@@ -182,15 +186,27 @@ while running:
             if y_offset > WINDOW_HEIGHT - 50:
                 break
     else:
-    
         if len(lyrics_manager.lyrics) > 0 and current_line_index >= 0:
-            timestamp, text = lyrics_manager.lyrics[current_line_index]
-            text_surface = font_lyrics.render(text, True, HIGHLIGHT_COLOR)
-
-            pos_x = SCREEN_AREA_WIDTH // 2 - text_surface.get_width() // 2
-            pos_y = WINDOW_HEIGHT // 2
-
-            screen.blit(text_surface, (pos_x, pos_y))
+            center_y = WINDOW_HEIGHT // 2
+            
+            
+            if current_line_index > 0:
+                _, prev_text = lyrics_manager.lyrics[current_line_index - 1]
+                prev_surface = font_lyrics_context.render(prev_text, True, LYRICS_CONTEXT_COLOR)
+                prev_x = SCREEN_AREA_WIDTH // 2 - prev_surface.get_width() // 2
+                screen.blit(prev_surface, (prev_x, center_y - LYRICS_LINE_SPACING))
+            
+            #Actual line
+            _, current_text = lyrics_manager.lyrics[current_line_index]
+            current_surface = font_lyrics_current.render(current_text, True, HIGHLIGHT_COLOR)
+            current_x = SCREEN_AREA_WIDTH // 2 - current_surface.get_width() // 2
+            screen.blit(current_surface, (current_x, center_y))
+            
+            if current_line_index < len(lyrics_manager.lyrics) - 1:
+                _, next_text = lyrics_manager.lyrics[current_line_index + 1]
+                next_surface = font_lyrics_context.render(next_text, True, LYRICS_CONTEXT_COLOR)
+                next_x = SCREEN_AREA_WIDTH // 2 - next_surface.get_width() // 2
+                screen.blit(next_surface, (next_x, center_y + LYRICS_LINE_SPACING))
 
     pygame.display.flip()
     clock.tick(60)
