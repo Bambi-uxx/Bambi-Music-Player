@@ -28,6 +28,10 @@ CIRCLE_RADIUS = 150
 #Button positions
 BUTTON_SIZE = 50
 
+#Button icon sizes
+ICON_SIZE_CENTER = 18
+ICON_SIZE_SIDE = 15
+
 #Song info display
 SONG_INFO_X = 20
 SONG_TITLE_Y = 20

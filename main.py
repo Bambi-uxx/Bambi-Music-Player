@@ -39,11 +39,50 @@ show_playlist = False
 
 
 #Buttons
-play_button_rect = pygame.Rect(CIRCLE_CENTER_X - 40, CIRCLE_CENTER_Y - 40, 80, 80)
+play_button_rect = pygame.Rect(CIRCLE_CENTER_X - 50, CIRCLE_CENTER_Y - 50, 100, 100)
 prev_button_rect = pygame.Rect(CIRCLE_CENTER_X - 115, CIRCLE_CENTER_Y - 25, 50, 50)
 next_button_rect = pygame.Rect(CIRCLE_CENTER_X + 65, CIRCLE_CENTER_Y - 25, 50, 50)
 vol_up_rect = pygame.Rect(CIRCLE_CENTER_X - 25, CIRCLE_CENTER_Y - 125, 50, 35)
 vol_down_rect = pygame.Rect(CIRCLE_CENTER_X - 25, CIRCLE_CENTER_Y + 75, 50, 35)
+
+#Draw buttons
+def draw_play_icon(surface, center_x, center_y, size, color):
+    points = [
+        (center_x - size//2, center_y - size),
+        (center_x - size//2, center_y + size),
+        (center_x + size, center_y)
+    ]
+    pygame.draw.polygon(surface, color, points)
+
+def draw_pause_icon(surface, center_x, center_y, size, color):
+    bar_width = size // 3
+    bar_height = size * 2
+    gap = size // 2
+    
+  
+    pygame.draw.rect(surface, color, (center_x - gap - bar_width, center_y - bar_height//2, bar_width, bar_height))
+  
+    pygame.draw.rect(surface, color, (center_x + gap, center_y - bar_height//2, bar_width, bar_height))
+
+def draw_prev_icon(surface, center_x, center_y, size, color):
+    pygame.draw.rect(surface, color, (center_x - size, center_y - size, 3, size * 2))
+    
+    points = [
+        (center_x + size, center_y),
+        (center_x - size + 5, center_y - size),
+        (center_x - size + 5, center_y + size)
+    ]
+    pygame.draw.polygon(surface, color, points)
+
+def draw_next_icon(surface, center_x, center_y, size, color):
+    points = [
+        (center_x - size, center_y),
+        (center_x + size - 5, center_y - size),
+        (center_x + size - 5, center_y + size)
+    ]
+    pygame.draw.polygon(surface, color, points)
+    
+    pygame.draw.rect(surface, color, (center_x + size - 3, center_y - size, 3, size * 2))
 
 while running:
     for event in pygame.event.get():
@@ -136,13 +175,22 @@ while running:
     pygame.draw.circle(screen, ACCENT_COLOR, (CIRCLE_CENTER_X, CIRCLE_CENTER_Y), CIRCLE_RADIUS, 3)
     pygame.draw.circle(screen, PANEL_COLOR, (CIRCLE_CENTER_X, CIRCLE_CENTER_Y), CIRCLE_RADIUS - 3)
 
-    center_button_rect = pygame.draw.circle(screen, HIGHLIGHT_COLOR, (CIRCLE_CENTER_X, CIRCLE_CENTER_Y), 40)
+    # Central button
+    center_button_rect = pygame.draw.circle(screen, HIGHLIGHT_COLOR, (CIRCLE_CENTER_X, CIRCLE_CENTER_Y), 50)
+    if player.is_playing:
+        draw_pause_icon(screen, CIRCLE_CENTER_X, CIRCLE_CENTER_Y, ICON_SIZE_CENTER, TEXT_COLOR)
+    else:
+        draw_play_icon(screen, CIRCLE_CENTER_X, CIRCLE_CENTER_Y, ICON_SIZE_CENTER, TEXT_COLOR)
+    
+    # Previous
     prev_x = CIRCLE_CENTER_X - 100
-    pygame.draw.polygon(screen, TEXT_COLOR, [(prev_x-15, CIRCLE_CENTER_Y), (prev_x+15, CIRCLE_CENTER_Y-15), (prev_x+15, CIRCLE_CENTER_Y+15)])
+    draw_prev_icon(screen, prev_x, CIRCLE_CENTER_Y, ICON_SIZE_SIDE, TEXT_COLOR)
     
+    # Next
     next_x = CIRCLE_CENTER_X + 100
-    pygame.draw.polygon(screen, TEXT_COLOR, [(next_x+15, CIRCLE_CENTER_Y), (next_x-15, CIRCLE_CENTER_Y-15), (next_x-15, CIRCLE_CENTER_Y+15)])
+    draw_next_icon(screen, next_x, CIRCLE_CENTER_Y, ICON_SIZE_SIDE, TEXT_COLOR)
     
+    # Volume
     vol_up_text = font_playlist.render("+", True, TEXT_COLOR)
     screen.blit(vol_up_text, (CIRCLE_CENTER_X - 10, CIRCLE_CENTER_Y - 110))
     
