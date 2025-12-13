@@ -34,7 +34,22 @@ class MusicPlayer:
 
     def get_pos(self):
         return mixer.music.get_pos() / 1000.0
-
+    
+    def get_pos(self):
+        pos = mixer.music.get_pos() / 1000.0
+        return max(0, pos)
+    
+    def get_duration(self):
+        if self.current_song:
+            try:
+                from mutagen import File
+                audio = File(self.current_song)
+                if audio and audio.info:
+                    return audio.info.length
+            except:
+                pass
+        return 0
+    
 
 
 

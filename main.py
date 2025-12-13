@@ -27,11 +27,12 @@ if len(playlist.songs) > 0:
     lyrics_manager.load_lrc(lrc_path)
 
 #Fonts
-font_lyrics_current = pygame.font.Font(None, FONT_SIZE_LYRICS_CURRENT)
-font_lyrics_context = pygame.font.Font(None, FONT_SIZE_LYRICS_CONTEXT)
-font_title = pygame.font.Font(None, FONT_SIZE_TITLE)
-font_artist = pygame.font.Font(None, FONT_SIZE_ARTIST)
-font_playlist = pygame.font.Font(None, FONT_SIZE_PLAYLIST_ITEM)
+font_lyrics_current = pygame.font.Font(FONT_QUICKSAND, FONT_SIZE_LYRICS_CURRENT)
+font_lyrics_context = pygame.font.Font(FONT_QUICKSAND, FONT_SIZE_LYRICS_CONTEXT)
+font_title = pygame.font.Font(FONT_RALEWAY, FONT_SIZE_TITLE)
+font_artist = pygame.font.Font(FONT_QUICKSAND, FONT_SIZE_ARTIST)
+font_playlist = pygame.font.Font(FONT_QUICKSAND, FONT_SIZE_PLAYLIST_ITEM)
+font_volume = pygame.font.Font(FONT_QUICKSAND, FONT_SIZE_VOLUME)
 
 current_line_index = -1
 current_pos = 0
@@ -148,7 +149,8 @@ while running:
             elif vol_down_rect.collidepoint(mouse_pos):
                 current_vol = player.volume
                 player.set_volume(current_vol - 0.1)
-
+            
+            # Click on playlist
             elif show_playlist and mouse_pos[0] < SCREEN_AREA_WIDTH:
                 click_y = mouse_pos[1]
 
@@ -191,11 +193,11 @@ while running:
     draw_next_icon(screen, next_x, CIRCLE_CENTER_Y, ICON_SIZE_SIDE, TEXT_COLOR)
     
     # Volume
-    vol_up_text = font_playlist.render("+", True, TEXT_COLOR)
-    screen.blit(vol_up_text, (CIRCLE_CENTER_X - 10, CIRCLE_CENTER_Y - 110))
+    vol_up_text = font_volume.render("+", True, TEXT_COLOR)
+    screen.blit(vol_up_text, (CIRCLE_CENTER_X - 15, CIRCLE_CENTER_Y - 115))
     
-    vol_down_text = font_playlist.render("-", True, TEXT_COLOR)
-    screen.blit(vol_down_text, (CIRCLE_CENTER_X - 10, CIRCLE_CENTER_Y + 90))
+    vol_down_text = font_volume.render("-", True, TEXT_COLOR)
+    screen.blit(vol_down_text, (CIRCLE_CENTER_X - 15, CIRCLE_CENTER_Y + 85))
 
     #Title and artist
     if len(playlist.songs) > 0:
@@ -208,6 +210,34 @@ while running:
             # Artist
             artist_display = font_artist.render(f"by {current_song['artist']}", True, (150, 150, 150))
             screen.blit(artist_display, (SONG_INFO_X, SONG_ARTIST_Y))
+
+    # Progress bar
+    if len(playlist.songs) > 0:
+        duration = player.get_duration()
+        if duration > 0:
+           
+            progress = min(current_pos / duration, 1.0)
+            
+            
+            bar_x = 20
+            bar_width = SCREEN_AREA_WIDTH - 40
+            pygame.draw.rect(screen, PROGRESS_BAR_COLOR, 
+                           (bar_x, PROGRESS_BAR_Y, bar_width, PROGRESS_BAR_HEIGHT), 
+                           border_radius=3)
+            
+            
+            fill_width = int(bar_width * progress)
+            if fill_width > 0:
+                pygame.draw.rect(screen, PROGRESS_FILL_COLOR, 
+                               (bar_x, PROGRESS_BAR_Y, fill_width, PROGRESS_BAR_HEIGHT), 
+                               border_radius=3)
+            
+            
+            current_time_str = f"{int(current_pos//60)}:{int(current_pos%60):02d}"
+            total_time_str = f"{int(duration//60)}:{int(duration%60):02d}"
+            time_text = font_artist.render(f"{current_time_str} / {total_time_str}", True, (150, 150, 150))
+            screen.blit(time_text, (bar_x, PROGRESS_BAR_Y + 15))
+
 
     # Alternate between playlist and lyrics
     if show_playlist:
